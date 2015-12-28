@@ -1,0 +1,121 @@
+#db_results {
+	position:absolute;
+	top:170px;
+        left:20px;
+        color: #999;
+	font-size: .75em;
+        width: 170px;
+}
+
+#group {
+    width: 300px;
+    top: 150px;
+    left: 200px;
+    position: absolute;
+}
+
+#group_for_steel {
+    width: 300px;
+    top: 150px;
+    left:500px;
+    position: absolute;
+}
+
+#block_group, #block_group_for_steel {
+    border: solid 1px #555555;
+    margin: 10px;
+    padding: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+
+.group, .group_for_steel {
+    border: solid 1px #333333;
+    font-weight: bold;
+    margin: 5px 0 5px 0;
+    padding: 5px;
+    text-align: left;
+    background-color: rgb(238,238,238);
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+
+.group:hover, .group_for_steel:hover {
+    background-color: rgb(218,218,238);
+}
+
+.selected {
+    background-color: orange;
+}
+
+.selected:hover {
+    background-color: rgb(265,205,0);
+}
+
+/*.dropHere {
+    background-color: #e7e7de;
+}*/
+
+input:focus{
+  outline:none;
+  border-color:rgba(255,25,33,.75);
+  border-radius:3px;
+  -moz-border-radius:3px;
+  -webkit-border-radius:3px;
+  box-shadow:0 0 8px rgba(255,25,33,.5);
+  -moz-box-shadow:0 0 8px rgba(255,25,33,.5);
+  -webkit-box-shadow:0 0 8px rgba(255,25,33,.5);
+}
+input{
+  border:1px solid #aaa;
+  border-radius:3px;
+  -moz-border-radius:3px;
+  -webkit-border-radius:3px;
+  transition:border linear .2s,box-shadow linear .2s;
+  -moz-transition:border linear .2s,-moz-box-shadow linear .2s;
+  -webkit-transition:border linear .2s,-webkit-box-shadow linear .2s;
+}
+
+#properties {
+  position:absolute;
+  top:170px;
+  left:800px;
+  width: 300px;
+  color: #999;
+}
+
+#commands {
+  position:absolute;
+  top:170px;
+  left:1100px;
+  width: 150px;
+  color: #999;
+}
+
+#mask {
+    position:absolute;
+    left:0;
+    top:0;
+    z-index:9000;
+    background-color:#000;
+    display:none;
+    }
+
+#boxes .window {
+    position:absolute;
+    left:0;
+    top:0;
+    width:300px;
+    height:25px;
+    display:none;
+    z-index:9999;
+/*    padding:20px;*/
+    }
+#reg_exp_dialog .d-header input {
+    border:3px solid #cccccc;
+    height:22px;
+    width:200px;
+    font-size:15px;
+    padding:5px;
+    margin-top:4px;
+}

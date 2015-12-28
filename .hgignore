@@ -1,0 +1,12 @@
+\.orig$
+\.orig\..*$
+\.chg\..*$
+\.rej$
+\.conflict\~$
+syntax: glob
+access.log-efdba8d8
+error.log-a4b029d4
+nbproject
+*.F21
+*.F22
+*.rsu
