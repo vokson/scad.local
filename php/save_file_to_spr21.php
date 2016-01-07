@@ -18,11 +18,11 @@ mysql_select_db(SCAD) or die("Не могу подключиться к базе
 mysql_query("SET NAMES utf8");
 
 //обновляем группы для подбора стали
-$groups_for_steel = new TMemberGroupSteel21();
-$s = $groups_for_steel->set_to_scad_spr();
-$body_hex = bin2hex($s);
-$sql = "UPDATE " . document_bin . " SET body = 0x$body_hex WHERE number = " . D_member_group_for_steel;
-mysql_query($sql);
+//$groups_for_steel = new TMemberGroupSteel21();
+//$s = $groups_for_steel->set_to_scad_spr();
+//$body_hex = bin2hex($s);
+//$sql = "UPDATE " . document_bin . " SET body = 0x$body_hex WHERE number = " . D_member_group_for_steel;
+//mysql_query($sql);
 
 //обновляем комбинации
 //$combinations = new TCombination();

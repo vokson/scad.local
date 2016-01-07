@@ -28,120 +28,171 @@ class MemberGroupSteel21 extends MemberList {
     public $length_XZ; //Расчетная длина в пл-ти XoZ
     public $length_XY; //Расчетная длина в пл-ти XoY
     public $name; //имя
+    public $list; // список элементов
 
-    function get_from_spr($data) {
-        $pos = 0;
+    public function __construct() {
+        $this->list = array();
+    }
 
-        //кол-во байт в типе стали (ищем первое вхождение нулевого байта)
-        $steelTypeByteCount = strpos($data, "\x00");
-            
+    /*
+     * Read single description block
+     * 
+     * @param string $data Binary data
+     * @param int $pos Position of cursost in data
+     */
+
+    function readSingleDescriptionBlock($data, &$pos) {
+
         // класс стали
-        $this->steel_type = substr($data, 0, $steelTypeByteCount);
-        $pos += 80;
+        $this->steel_type = $this->readCharArray($data, $pos);
+        $pos += 80 - strlen($this->steel_type);
 
         // Тип группы
-        $this->group_type = unpackInt_1( substr($data, $pos, 1));
+        list(, $this->group_type) = unpack("C", substr($data, $pos, 1));
         $pos += 1;
 
         // Тип элемента
-        $this->member_type = unpackInt_1( substr($data, $pos, 1));
+        list(, $this->member_type) = unpack("C", substr($data, $pos, 1));
         $pos += 1;
 
         // Нулевые байты
         $pos += 3;
 
         // Коэффициент расчетной длины отличается от нормативных
-        $this->isMuSameWithRegulation = unpackInt_1( substr($data, $pos, 1));
+        list(, $this->isMuSameWithRegulation) = unpack("C", substr($data, $pos, 1));
         $pos += 1;
 
         // 00 - расчетные длины, 01 - коэффициенты расчетной длины
-        $this->isMuUsed = unpackInt_1( substr($data, $pos, 1));
+        list(, $this->isMuUsed) = unpack("C", substr($data, $pos, 1));
         $pos += 1;
 
         // Неупругая работа (0 - нет, 1 - да)
-        $this->isOnlyElastic = unpackInt_1( substr($data, $pos, 1));
+        list(, $this->isOnlyElastic) = unpack("C", substr($data, $pos, 1));
         $pos += 1;
 
         // сопротивление стали
-        $this->steel_Ry = unpackDouble( substr($data, $pos, 8));
+        list(, $this->steel_Ry) = unpack("d", substr($data, $pos, 8));
         $pos += 8;
 
         //gamma_N
-        $this->gamma_n = unpackDouble( substr($data, $pos, 8));
+        list(, $this->gamma_n) = unpack("d", substr($data, $pos, 8));
         $pos += 8;
         //gamma_C
-        $this->gamma_c = unpackDouble( substr($data, $pos, 8));
+        list(, $this->gamma_c) = unpack("d", substr($data, $pos, 8));
         $pos += 8;
 
         // Нулевые байты
         $pos += 8;
 
         // Коэффициенты расчетной длины
-        $this->mu_XZ = unpackDouble( substr($data, $pos, 8));
+        list(, $this->mu_XZ) = unpack("d", substr($data, $pos, 8));
         $pos += 8;
-        $this->mu_XY = unpackDouble( substr($data, $pos, 8));
+        list(, $this->mu_XY) = unpack("d", substr($data, $pos, 8));
         $pos += 8;
 
         // Гибкости
-        $this->flexCompressed = unpackDouble( substr($data, $pos, 8));
+        list(, $this->flexCompressed) = unpack("d", substr($data, $pos, 8));
         $pos += 8;
-        $this->flexTensed = unpackDouble( substr($data, $pos, 8));
+        list(, $this->flexTensed) = unpack("d", substr($data, $pos, 8));
         $pos += 8;
 
         // Расстояние между точками раскрепления
-        $this->bucklingDistance = unpackDouble( substr($data, $pos, 8));
+        list(, $this->bucklingDistance) = unpack("d", substr($data, $pos, 8));
         $pos += 8;
 
         // Нулевые байты
         $pos += 16;
 
         // Расчетные длины
-        $this->length_XZ = unpackDouble( substr($data, $pos, 8));
+        list(, $this->length_XZ) = unpack("d", substr($data, $pos, 8));
         $pos += 8;
-        $this->length_XY = unpackDouble( substr($data, $pos, 8));
+        list(, $this->length_XY) = unpack("d", substr($data, $pos, 8));
         $pos += 8;
 
         // Неизвестные значения
-        $this->noname1 = unpackDouble( substr($data, $pos, 8));
+        list(, $this->noname1) = unpack("d", substr($data, $pos, 8));
         $pos += 8;
-        $this->noname2 = unpackDouble( substr($data, $pos, 8));
+        list(, $this->noname2) = unpack("d", substr($data, $pos, 8));
         $pos += 8;
 
         // Нулевые байты
         $pos += 8;
 
         // Проверка перемещений от всех нагрузок (0 - да, 1 - нет)
-        $this->deflectionFromAllLoadsToBeChecked = unpackInt_1( substr($data, $pos, 1));
+        list(, $this->deflectionFromAllLoadsToBeChecked) = unpack("C", substr($data, $pos, 1));
         $pos += 1;
 
         // Проверка перемещений от временных нагрузок (0 - да, 1 - нет)
-        $this->deflectionFromTemporaryLoadsToBeChecked = unpackInt_1( substr($data, $pos, 1));
+        list(, $this->deflectionFromTemporaryLoadsToBeChecked) = unpack("C", substr($data, $pos, 1));
         $pos += 1;
 
         // Нулевые байты
         $pos += 32;
 
         // Предельные относительные перемещения
-        $this->limitRelativeDisplacementFromAllLoads = unpackFloat( substr($data, $pos, 4));
+        list(, $this->limitRelativeDisplacementFromAllLoads) = unpack("f", substr($data, $pos, 4));
         $pos += 4;
-        $this->limitRelativeDisplacementFromTemporaryLoads = unpackFloat( substr($data, $pos, 4));
+        list(, $this->limitRelativeDisplacementFromTemporaryLoads) = unpack("f", substr($data, $pos, 4));
         $pos += 4;
 
         // Нулевые байты
         $pos += 22;
 
         // Дополнительная группа (0 - нет, 1 - да)
-        $this->isGroupAdditional = unpackInt_1( substr($data, $pos, 1));
+        list(, $this->isGroupAdditional) = unpack("C", substr($data, $pos, 1));
         $pos += 1;
 
         // Нулевые байты
         $pos += 40;
 
         // Предельные абсолютные перемещения
-        $this->limitAbsoluteDisplacementFromAllLoads = unpackFloat( substr($data, $pos, 4));
+        list(, $this->limitAbsoluteDisplacementFromAllLoads) = unpack("f", substr($data, $pos, 4));
         $pos += 4;
-        $this->limitAbsoluteDisplacementFromTemporaryLoads = unpackFloat( substr($data, $pos, 4));
+        list(, $this->limitAbsoluteDisplacementFromTemporaryLoads) = unpack("f", substr($data, $pos, 4));
         $pos += 4;
+    }
+
+    /*
+     * Read single list block
+     * 
+     * @param string $data Binary data
+     * @param int $pos Position of cursor in data
+     */
+
+    function readSingleListBlock($data, &$pos) {
+        // Имя группы
+        $this->name = $this->readCharArray($data, $pos);
+        
+        // Кол-во элементов в группе
+        list(, $count) = unpack("I", substr($data, $pos, 4));
+        $pos += 4;
+        
+        for ($i = 0; $i < $count; $i++) {
+            list(, $this->list[]) = unpack("I", substr($data, $pos, 4));
+            $pos += 4;
+        }
+    }
+
+    /*
+     * Get portion of string upto null byte (including null byte)
+     * 
+     * @param string $data Binary data
+     * @param int $pos Position of cursor in data
+     * 
+     * @return string
+     */
+
+    private function readCharArray($data, &$pos) {
+        // Ищем нулевой байт - символ конца имени
+        $nullBytePos = strpos($data, "\x00", $pos);
+
+        // Читаем 
+        $s = substr($data, $pos, $nullBytePos - $pos + 1);
+
+        // Изменяем курсор
+        $pos = $nullBytePos + 1;
+
+        return $s;
     }
 
 }

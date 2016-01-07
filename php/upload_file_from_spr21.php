@@ -102,8 +102,8 @@ if (isset($_FILES['file']['name']) && $_FILES['file']['name'] != '') {
     
     //разбираем группы для подбора стали
     if (isset($document[D_member_group_for_steel])) {
-        $member_groups_for_steel = new TMemberGroupSteel21();
-        $member_groups_for_steel->get_from_scad_spr($document[D_member_group_for_steel]->body);
+        $doc = new TMemberGroupSteel21();
+        $doc->read($document[D_member_group_for_steel]->body);
         echo D_member_group_for_steel . ' - группы элементов для подбора;<br/>';
     }
 
