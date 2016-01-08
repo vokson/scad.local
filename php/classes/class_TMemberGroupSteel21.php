@@ -1,6 +1,11 @@
 <?php
 
 class TMemberGroupSteel21 {
+    
+    const databaseAction = [
+        'steel' => 'databaseEncoding'
+    ];
+    
     /*
      * Read Document No.28. Upload it into database.
      *
@@ -10,7 +15,7 @@ class TMemberGroupSteel21 {
 
         // Курсор для чтения строки
         $pos = 0;
-
+        
         // Пропускаем неизвестный символ
         $pos += 1;
 
@@ -61,42 +66,60 @@ class TMemberGroupSteel21 {
      */
 
     private function writeDatabase($object) {
+        
+        $queryPropertyArray = array();
+        
+        $properties = get_object_vars($object);
+        foreach ($properties as $key => $value ) {
+            // If there is database action for the property
+            if (isset(self::$databaseAction[$key])) {
+                $function = self::$databaseAction[$key];
+                $value = $this->$function($value, TRUE);
+            }
+            // Add to query array
+            $queryPropertyArray[] = "$key = '$value'";
+        }
+        
+        $query = "INSERT IGNORE INTO " . member_group_for_steel . " SET " .
+                implode(',', $queryPropertyArray);
+        
+        mysql_query($query);
 
-        //запись в базу данных
-        mysql_query("INSERT IGNORE INTO " . member_group_for_steel . " SET
-                      steel = '$object->steel_type',
-                      Ry = '$object->steel_Ry',
-                          
-                      group_type = '$object->group_type',
-                      member_type = '$object->member_type',
-                          
-                      isMuReg = '$object->isMuSameWithRegulation',
-                      isMuUsed = '$object->isMuUsed',
-                      onlyElastic = '$object->isOnlyElastic',
-                      addGroup = '$object->isGroupAdditional',
-                      check_DAL = '$object->deflectionFromAllLoadsToBeChecked',
-                      check_DTL = '$object->deflectionFromTemporaryLoadsToBeChecked',
-                          
-                      limit_RDAL = '$object->limitRelativeDisplacementFromAllLoads',
-                      limit_RDTL = '$object->limitRelativeDisplacementFromTemporaryLoads',
-                      limit_ADAL = '$object->limitAbsoluteDisplacementFromAllLoads',
-                      limit_ADTL = '$object->limitAbsoluteDisplacementFromTemporaryLoads',
-                          
-                      gamma_n = '$object->gamma_n',                        
-                      gamma_c = '$object->gamma_c',
-                          
-                      FC = '$object->flexCompressed',
-                      FT = '$object->flexTensed',
-                      BD = '$object->bucklingDistance',    
-
-                      mu_XZ = '$object->mu_XZ',
-                      mu_XY = '$object->mu_XY',
-                      length_XZ = '$object->length_XZ',
-                      length_XY = '$object->length_XY',
-                          
-                      name = '" . iconv('Windows-1251', 'UTF-8', $object->name) . "',
-                      list = '" . implode(' ', $object->list) . "'"
-        );
+//        //запись в базу данных
+//        mysql_query("INSERT IGNORE INTO " . member_group_for_steel . " SET
+//                      steel = '$object->steel_type',
+//                      Ry = '$object->steel_Ry',
+//                          
+//                      group_type = '$object->group_type',
+//                      member_type = '$object->member_type',
+//                          
+//                      isMuReg = '$object->isMuSameWithRegulation',
+//                      isMuUsed = '$object->isMuUsed',
+//                      onlyElastic = '$object->isOnlyElastic',
+//                      addGroup = '$object->isGroupAdditional',
+//                      check_DAL = '$object->deflectionFromAllLoadsToBeChecked',
+//                      check_DTL = '$object->deflectionFromTemporaryLoadsToBeChecked',
+//                          
+//                      limit_RDAL = '$object->limitRelativeDisplacementFromAllLoads',
+//                      limit_RDTL = '$object->limitRelativeDisplacementFromTemporaryLoads',
+//                      limit_ADAL = '$object->limitAbsoluteDisplacementFromAllLoads',
+//                      limit_ADTL = '$object->limitAbsoluteDisplacementFromTemporaryLoads',
+//                          
+//                      gamma_n = '$object->gamma_n',                        
+//                      gamma_c = '$object->gamma_c',
+//                          
+//                      FC = '$object->flexCompressed',
+//                      FT = '$object->flexTensed',
+//                      BD = '$object->bucklingDistance',    
+//
+//                      mu_XZ = '$object->mu_XZ',
+//                      mu_XY = '$object->mu_XY',
+//                      length_XZ = '$object->length_XZ',
+//                      length_XY = '$object->length_XY',
+//                          
+//                      name = '" . iconv('Windows-1251', 'UTF-8', $object->name) . "',
+//                      list = '" . implode(' ', $object->list) . "'"
+//        );
     }
 
     // создает документ с группами для подбора стали
