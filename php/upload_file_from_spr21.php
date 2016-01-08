@@ -4,12 +4,17 @@
  * Загружаем SCAD21 *.SPR файл
  *
  */
+
 //Максимальное время работы скрипта 1 час
 set_time_limit(300);
 //Выделяем память для работы скрипта
 ini_set('memory_limit', '32M');
 
-//функции автозагрузки классов
+// Функции автозагрузки классов
+//spl_autoload_extensions(".php");
+//spl_autoload_register();
+
+
 function convert_class_to_filename($class) {
     return './classes/class_' . str_replace('_', '/', $class) . '.php';
 }
