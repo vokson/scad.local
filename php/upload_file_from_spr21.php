@@ -34,6 +34,7 @@ include './db_create.php';
 
 include_once './func.php';
 include_once './db_connect.php';
+
 //подключаемся к базе
 $dbh = mysql_connect(host, user, pswd) or die("Не могу соединиться с MySQL.");
 mysql_select_db(SCAD) or die("Не могу подключиться к базе.");

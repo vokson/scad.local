@@ -1,12 +1,22 @@
 <?php
 
 class Utils {
-    
-  static public function nameOfDoc28Table() {
-    return 'member_group_for_steel';  
-  }
- 
-  /*
+    /*
+     * Return database connection information
+     * 
+     * @return string[]
+     */
+
+    static public function getDSN() {
+        return array('dsn' => "mysql:host=localhost;dbname=scad;charset=utf8",
+            'username' => 'root', 'password' => 'vokson');
+    }
+
+    static public function nameOfDoc28Table() {
+        return 'member_group_for_steel';
+    }
+
+    /*
      * Change encoding of variable UTF8 <-> CP1251
      * 
      * @param string $value String to be converted
@@ -43,4 +53,23 @@ class Utils {
             return explode(' ', $value);
         }
     }
+    
+    /*
+     * Get class name of object without namespace
+     * 
+     * @param mixed $obj Object
+     * 
+     * @return string Class name without namespace
+     */
+
+    static public function getClassName($obj) {
+        $classname = get_class($obj);
+
+        if (preg_match('@\\\\([\w]+)$@', $classname, $matches)) {
+            $classname = $matches[1];
+        }
+
+        return $classname;
+    }
+
 }

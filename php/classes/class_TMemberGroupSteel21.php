@@ -2,11 +2,11 @@
 
 class TMemberGroupSteel21 {
 
-    private $databaseAction = [
-        'steel' => 'databaseEncoding',
-        'name' => 'databaseEncoding',
-        'list' => 'databaseList'
-    ];
+//    private $databaseAction = [
+//        'steel' => 'databaseEncoding',
+//        'name' => 'databaseEncoding',
+//        'list' => 'databaseList'
+//    ];
 
     /*
      * Read Document No.28. Upload it into database.
@@ -60,27 +60,11 @@ class TMemberGroupSteel21 {
      */
 
     private function writeObjectsToDatabase($objects) {
-        mysql_query("TRUNCATE TABLE " . member_group_for_steel);
+//        mysql_query("TRUNCATE TABLE " . member_group_for_steel);
+        $objectAssembler = PersistenceFactory::getObjectAssembler(Utils::getClassName(reset($objects)));
 
         foreach ($objects as $object) {
-            $queryPropertyArray = array();
-
-            $properties = get_object_vars($object);
-            foreach ($properties as $key => $value) {
-                // If there is database action for the property
-                if (isset($this->databaseAction[$key])) {
-                    $function = $this->databaseAction[$key];
-                    $value = $this->$function($value, TRUE);
-                }
-                // Add to query array
-                $queryPropertyArray[] = "$key = '$value'";
-            }
-
-            $query = "INSERT IGNORE INTO " . member_group_for_steel . " SET " .
-                    implode(',', $queryPropertyArray);
-
-//        echo $query . "<br/>";
-            mysql_query($query);
+            $objectAssembler->insert($object);
         }
     }
     
