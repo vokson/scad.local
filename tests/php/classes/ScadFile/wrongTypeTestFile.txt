@@ -1,0 +1,30 @@
+CUT - 
+DBI - 
+COD - something about command file
+EMF - picture of model
+STD - STAAD File
+LOG - Log File
+_MASS.TXT - Modal masses
+.ed.Backup - Backup of STD file
+DSP - displacement of nodes
+DAY - LOG file of calculation
+DBI - Initial File for Sections 
+MMTX - 
+CFR - 
+DBS - Beam Section Files
+EQL - 
+NUM - 
+SLG - parameters for view
+DSP - Displacement File
+REA - Reaction File
+MSH - Mode Shape File
+BEN - Section Force File
+BMD - Section Force File
+SEC - Section Displacement File
+SCN - Section Displace File
+EST - Element Stress File
+EJT - Element JT Stress File
+ECF - Element JT Force File
+SST - Solid Stress File
+.REI_SPRO_Auxilary_Data - ????
+ANL - Report File
