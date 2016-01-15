@@ -8,10 +8,10 @@ class ScadFileTest extends \PHPUnit_Framework_TestCase
 {
     const CORRECT_TEST_FILE_NAME = "correctScad21TestFile.SPR";
     const EMPTY_TEST_FILE_NAME = "emptyScad21TestFile.SPR";
-    const WRONG_TEST_FILE_NAME_01 = "wrongScad21TestFile_01.SPR";
-    const WRONG_TEST_FILE_NAME_02 = "wrongScad21TestFile_02.SPR";
+    const WRONG_TEST_FOOTER_INCREASED_FILE_NAME = "wrongScad21FooterIncreasedTestFile.SPR"; 
+    const WRONG_TEST_FOOTER_DECREASED_FILE_NAME = "wrongScad21FooterDecreasedTestFile.SPR"; 
+    const WRONG_TEST_FOOTER_TOO_BIG_FILE_NAME = "wrongScad21FooterTooBigTestFile.SPR";
     const WRONG_TYPE_FILE_NAME = "wrongTypeTestFile.txt";
-//    const CORRECT_DOCS_DESCRIPTION_ADDRESS = 103129;
     
     private $wrongFileFormatExceptionClassName;
     protected $object;
@@ -41,27 +41,28 @@ class ScadFileTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($isObjectCreated);
     }
     
-    public function testIsWrongScadFileUploadedWithException_01() {
+    public function testIsWrongScadFileFooterAddressIncreasedByOneUploadedWithException() {
         $this->setExpectedException($this->wrongFileFormatExceptionClassName);
-        $testFileContent = $this->getFileContent(self::WRONG_TEST_FILE_NAME_01);
-        $object = new ScadFile($testFileContent);
+        $testFileContent = $this->getFileContent(self::WRONG_TEST_FOOTER_INCREASED_FILE_NAME);
+        new ScadFile($testFileContent);
     }
     
-    public function testIsWrongScadFileUploadedWithException_02() {
+    public function testIsWrongScadFileFooterAddressDecreasedByOneUploadedWithException() {
         $this->setExpectedException($this->wrongFileFormatExceptionClassName);
-        $testFileContent = $this->getFileContent(self::WRONG_TEST_FILE_NAME_02);
-        $object = new ScadFile($testFileContent);
+        $testFileContent = $this->getFileContent(self::WRONG_TEST_FOOTER_DECREASED_FILE_NAME);
+        new ScadFile($testFileContent);
+    }
+    
+    public function testIsWrongScadFileFooterAddressTooBigUploadedWithException() {
+        $this->setExpectedException($this->wrongFileFormatExceptionClassName);
+        $testFileContent = $this->getFileContent(self::WRONG_TEST_FOOTER_TOO_BIG_FILE_NAME);
+        new ScadFile($testFileContent);
     }
     
     public function testIsWrongTypeFileUploadedWithException() {
         $this->setExpectedException($this->wrongFileFormatExceptionClassName);
         $testFileContent = $this->getFileContent(self::WRONG_TYPE_FILE_NAME);
-        $object = new ScadFile($testFileContent);
+        new ScadFile($testFileContent);
     }
     
-//    public function testGetCorrectFileFooterAddress() {
-//        $this->assertEquals(self::CORRECT_DOCS_DESCRIPTION_ADDRESS,
-//                $this->object->getFileFooterAddress());
-//    }
-
 }

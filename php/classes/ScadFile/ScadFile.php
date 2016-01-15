@@ -5,34 +5,78 @@ namespace php\classes\ScadFile;
 class ScadFile {
 
     private $binaryFileContent;
+    private $docs = array();
 //    private $fileMap = array(
 //      'footerAddress' =>  
 //    );
     const CORRECT_HEADER_WORD = '*Schema*';
-//    private $footerVariableAddress = 8;
-//    private $footerVariableBytesCount = 4;
+    const FOOTER_VARIABLE_ADDRESS = 8;
 
     public function __construct($content) {
-        if (!$this->isHeaderWordCorrect($content)) {
+        
+        $this->binaryFileContent = $content;
+        
+        $this->checkHeaderWordCorrect();
+        $this->uploadDocuments();
+    }
+
+    private function checkHeaderWordCorrect() {
+        $headerWord = substr($this->binaryFileContent, 0, strlen(self::CORRECT_HEADER_WORD));
+        if (strcmp($headerWord, self::CORRECT_HEADER_WORD) != 0) {
             throw new WrongFileFormatException;
         }
-        $this->binaryFileContent = $content;
+    }
+    
+    private function uploadDocuments() {
+        $offset = $this->getFileFooterAddress();
+        
+        $isFinalDocument = FALSE;
+        while ($isFinalDocument === FALSE) {
+            $docNumber = $this->unpackShortValue($offset);
+            $offset += 2;
+            
+            $isFinalDocument = $this->isNumberOfDocumentFinal($docNumber);
+            
+            if ($isFinalDocument === FALSE) {
+                $docAddress = $this->unpackIntegerValue($offset);
+                $offset += 8;
+                $docBytesCount = $this->unpackIntegerValue($offset);
+                $offset += 8;
+                
+                $this->docs[] = new \php\classes\BinaryDocument\BinaryDocument($docNumber, $docAddress, $docBytesCount);
+            } else {
+                if ($offset != strlen($this->binaryFileContent)) {
+                    throw new WrongFileFormatException;
+                }
+            }
+        }
+    }
+    
+    private function isNumberOfDocumentFinal($number) {
+        return ($number == 0);
     }
 
-    private function isHeaderWordCorrect($content) {
-        $headerWord = substr($content, 0, strlen(self::CORRECT_HEADER_WORD));
-        return (strcmp($headerWord, self::CORRECT_HEADER_WORD) == 0);
+    private function getFileFooterAddress() {
+        return $this->unpackIntegerValue(self::FOOTER_VARIABLE_ADDRESS);
     }
+    
+    private function unpackIntegerValue($address) {
+        return $this->unpackValue($address, 4, 'I');
+    }
+    
+    private function unpackShortValue($address) {
+        return $this->unpackValue($address, 2, 'S');
+    }
+    
+    private function unpackValue($address, $bytesCount, $type) {
+        if ( strlen($this->binaryFileContent) < ($address + $bytesCount)) {
+            throw new WrongFileFormatException;
+        }
+        
+        $variableBinaryData = substr($this->binaryFileContent, $address, $bytesCount);
+        $unpackedArray = unpack($type, $variableBinaryData);
 
-//    public function getFileFooterAddress() {
-//         if ( strlen($this->binaryFileContent) < ($this->footerVariableAddress + $this->footerVariableBytesCount)) {
-//            throw new \Exception("File's footer address unpack error");
-//        }
-//        
-//        $variableBinaryData = substr($this->binaryFileContent, $this->footerVariableAddress, $this->footerVariableBytesCount);
-//        $unpackedArray = unpack('I', $variableBinaryData);
-//
-//        return $unpackedArray[1];
-//    }
+        return $unpackedArray[1];
+    }
 
 }

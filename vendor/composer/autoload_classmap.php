@@ -30,6 +30,7 @@ return array(
     'TMemberGroupSteel21' => $baseDir . '/php/classes/class_TMemberGroupSteel21.php',
     'TNode' => $baseDir . '/php/classes/class_TNode.php',
     'Utils' => $baseDir . '/php/classes/class_Utils.php',
+    'php\\classes\\BinaryDocument\\BinaryDocument' => $baseDir . '/php/classes/BinaryDocument/BinaryDocument.php',
     'php\\classes\\ScadFile\\ScadFile' => $baseDir . '/php/classes/ScadFile/ScadFile.php',
     'php\\classes\\ScadFile\\ScadFileException' => $baseDir . '/php/classes/ScadFile/ScadFileException.php',
     'php\\classes\\ScadFile\\ScadFileTest' => $baseDir . '/tests/php/classes/ScadFile/ScadFileTest.php',
