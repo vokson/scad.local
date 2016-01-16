@@ -20,8 +20,11 @@ class ScadFileTest extends \PHPUnit_Framework_TestCase
     {
         $this->wrongFileFormatExceptionClassName = get_class(new WrongFileFormatException);
         
-        $testFileContent = $this->getFileContent(self::CORRECT_TEST_FILE_NAME);
-        $this->object = new ScadFile($testFileContent);
+        $this->correctTestFileContent = $this->getFileContent(self::CORRECT_TEST_FILE_NAME);
+        $this->correctScadFile = new ScadFile($this->correctTestFileContent);
+        
+        $this->emptyTestFileContent = $this->getFileContent(self::EMPTY_TEST_FILE_NAME);
+        $this->emptyScadFile = new ScadFile($this->emptyTestFileContent);
     }
     
     private function getFileContent($fileName) {
@@ -29,15 +32,12 @@ class ScadFileTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testIsCorrectScadFileUploaded() {
-        $isObjectCreated = !is_null($this->object);
+        $isObjectCreated = !is_null($this->correctScadFile);
         $this->assertTrue($isObjectCreated);
     }
     
     public function testIsEmptyScadFileUploaded() {
-        $testFileContent = $this->getFileContent(self::EMPTY_TEST_FILE_NAME);
-        $object = new ScadFile($testFileContent);
-        
-        $isObjectCreated = !is_null($object);
+        $isObjectCreated = !is_null($this->emptyScadFile);
         $this->assertTrue($isObjectCreated);
     }
     
@@ -63,6 +63,14 @@ class ScadFileTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException($this->wrongFileFormatExceptionClassName);
         $testFileContent = $this->getFileContent(self::WRONG_TYPE_FILE_NAME);
         new ScadFile($testFileContent);
+    }
+    
+    public function testSaveCorrectFile() {
+        $this->assertEquals($this->correctScadFile->getContent(), $this->correctTestFileContent);
+    }
+    
+    public function testSaveEmptyFile() {
+        $this->assertEquals($this->emptyScadFile->getContent(), $this->emptyTestFileContent);
     }
     
 }

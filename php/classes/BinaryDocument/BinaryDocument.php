@@ -2,17 +2,13 @@
 
 namespace php\classes\BinaryDocument;
 
-class BinaryDocument {
-    private $number; 
-    private $address;
-    private $bytesCount;
-    private $body;
-    private $appendix; 
-    
+use php\classes\PropertyContainer\PropertyContainer;
+
+class BinaryDocument extends PropertyContainer{
+
     public function __construct($number, $address, $bytesCount) {
         $this->number = $number;
         $this->address = $address;
         $this->bytesCount = $bytesCount;
     }
 }
-
