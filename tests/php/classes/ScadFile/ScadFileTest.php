@@ -7,6 +7,7 @@ namespace php\classes\ScadFile;
  */
 class ScadFileTest extends \PHPUnit_Framework_TestCase {
 
+    const RESULT_TEST_FILE_NAME = "resultScad21TestFile.SPR";
     const CORRECT_TEST_FILE_NAME = "correctScad21TestFile.SPR";
     const EMPTY_TEST_FILE_NAME = "emptyScad21TestFile.SPR";
     const WRONG_TEST_FOOTER_INCREASED_FILE_NAME = "wrongScad21FooterIncreasedTestFile.SPR";
@@ -16,6 +17,7 @@ class ScadFileTest extends \PHPUnit_Framework_TestCase {
     const CORRECT_STEEL_GROUP_CHECK_DOCUMENT_FILE_NAME = "correctDocSteelCheckGroup";
 
     private $wrongFileFormatExceptionClassName;
+    private $missingDocumentExceptionClassName;
     private $correctTestFileContent;
     private $correctScadFile;
     private $emptyTestFileContent;
@@ -26,6 +28,7 @@ class ScadFileTest extends \PHPUnit_Framework_TestCase {
 
     protected function setUp() {
         $this->wrongFileFormatExceptionClassName = get_class(new WrongFileFormatException);
+        $this->missingDocumentExceptionClassName = get_class(new MissingDocumentException);
 
         $this->correctTestFileContent = $this->getFileContent(self::CORRECT_TEST_FILE_NAME);
         $this->correctScadFile = new ScadFile($this->correctTestFileContent);
@@ -75,14 +78,27 @@ class ScadFileTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testSaveCorrectFile() {
-        $this->assertEquals($this->correctTestFileContent, $this->correctScadFile->getContent());
+        $this->assertEquals($this->correctTestFileContent, $this->correctScadFile->getFile());
     }
 
     public function testSaveEmptyFile() {
-        $this->assertEquals($this->emptyTestFileContent, $this->emptyScadFile->getContent());
+        $this->assertEquals($this->emptyTestFileContent, $this->emptyScadFile->getFile());
     }
     
-    public function testGetSteelCheckGroupDocument() {
+    public function testGetSteelCheckGroupDocumentFromCorrectFile() {
         $this->assertEquals($this->correctSteelCheckGroupDocumentContent, $this->correctScadFile->getSteelCheckGroupDocument());
+    }
+    
+    public function testSetSteelCheckGroupDocumentFromCorrectFile() {
+        $this->correctScadFile->setSteelCheckGroupDocument('TEST DOCUMENT 28');
+        file_put_contents(realpath(__DIR__ . DIRECTORY_SEPARATOR . self::RESULT_TEST_FILE_NAME), $this->correctScadFile->getFile());
+        
+        $file = new ScadFile($this->getFileContent(self::RESULT_TEST_FILE_NAME));
+        $this->assertEquals('TEST DOCUMENT 28', $file->getSteelCheckGroupDocument());
+    }
+    
+    public function testGetSteelCheckGroupDocumentFromEmptyFile() {
+        $this->setExpectedException($this->missingDocumentExceptionClassName);
+        $this->emptyScadFile->getSteelCheckGroupDocument();
     }
 }
