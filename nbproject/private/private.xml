@@ -5,12 +5,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/E:/Aleksei/Havings/Code/scad.local/php/classes/ScadFile/Exception/MissingDocumentException.php</file>
-            <file>file:/E:/Aleksei/Havings/Code/scad.local/php/classes/ScadFile/Exception/DocumentNotFoundException.php</file>
-            <file>file:/E:/Aleksei/Havings/Code/scad.local/php/classes/ScadFile/ScadFile.php</file>
-            <file>file:/E:/Aleksei/Havings/Code/scad.local/php/classes/class_MemberGroupSteel21.php</file>
-            <file>file:/E:/Aleksei/Havings/Code/scad.local/Documentation/SCAD21%20Doc%2028%20Format</file>
-            <file>file:/E:/Aleksei/Havings/Code/scad.local/php/classes/class_TMemberGroupSteel21.php</file>
+            <file>file:/E:/Aleksei/Havings/Code/scad.local/php/classes/Document/GroupSteelCheckDocument/GroupSteelCheckDocument.php</file>
+            <file>file:/E:/Aleksei/Havings/Code/scad.local/tests/php/classes/Document/GroupSteelCheckDocument/GroupSteelCheckDocumentTest.php</file>
         </group>
     </open-files>
 </project-private>

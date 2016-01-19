@@ -30,7 +30,12 @@ return array(
     'TMemberGroupSteel21' => $baseDir . '/php/classes/class_TMemberGroupSteel21.php',
     'TNode' => $baseDir . '/php/classes/class_TNode.php',
     'Utils' => $baseDir . '/php/classes/class_Utils.php',
+    'php\\classes\\BinaryDataContainer\\BinaryDataContainer' => $baseDir . '/php/classes/BinaryDataContainer/BinaryDataContainer.php',
+    'php\\classes\\BinaryDataContainer\\BinaryDataContainerException' => $baseDir . '/php/classes/BinaryDataContainer/Exception/BinaryDataContainerException.php',
+    'php\\classes\\BinaryDataContainer\\WrongDataFormatException' => $baseDir . '/php/classes/BinaryDataContainer/Exception/WrongDataFormatException.php',
     'php\\classes\\BinaryDocument\\BinaryDocument' => $baseDir . '/php/classes/BinaryDocument/BinaryDocument.php',
+    'php\\classes\\Document\\GroupSteelCheckDocument\\GroupSteelCheckDocument' => $baseDir . '/php/classes/Document/GroupSteelCheckDocument/GroupSteelCheckDocument.php',
+    'php\\classes\\Document\\GroupSteelCheckDocument\\GroupSteelCheckDocumentTest' => $baseDir . '/tests/php/classes/Document/GroupSteelCheckDocument/GroupSteelCheckDocumentTest.php',
     'php\\classes\\ObjectSorting\\A' => $baseDir . '/tests/php/classes/ObjectSorting/ObjectSortingTest.php',
     'php\\classes\\ObjectSorting\\B' => $baseDir . '/tests/php/classes/ObjectSorting/ObjectSortingTest.php',
     'php\\classes\\ObjectSorting\\C' => $baseDir . '/tests/php/classes/ObjectSorting/ObjectSortingTest.php',
@@ -45,5 +50,4 @@ return array(
     'php\\classes\\ScadFile\\ScadFile' => $baseDir . '/php/classes/ScadFile/ScadFile.php',
     'php\\classes\\ScadFile\\ScadFileException' => $baseDir . '/php/classes/ScadFile/Exception/ScadFileException.php',
     'php\\classes\\ScadFile\\ScadFileTest' => $baseDir . '/tests/php/classes/ScadFile/ScadFileTest.php',
-    'php\\classes\\ScadFile\\WrongFileFormatException' => $baseDir . '/php/classes/ScadFile/Exception/WrongFileFormatException.php',
 );

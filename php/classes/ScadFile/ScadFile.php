@@ -2,13 +2,14 @@
 
 namespace php\classes\ScadFile;
 
+use php\classes\BinaryDataContainer\BinaryDataContainer;
+use php\classes\BinaryDataContainer\WrongDataFormatException;
 use php\classes\BinaryDocument\BinaryDocument;
 use php\classes\ObjectSorting\ObjectSorting;
 
-class ScadFile {
+class ScadFile extends BinaryDataContainer {
     
     const CORRECT_HEADER_WORD = '*Schema*';
-    private $bytesCountByType = array('S' => 2, 'L' => 4);
     
     const FOOTER_VARIABLE_ADDRESS = 8;
     const HEADER_DOCUMENT_ADDRESS = 12;
@@ -16,8 +17,8 @@ class ScadFile {
     const FINAL_DOCUMENT_NUMBER = 0;
     const DOC_STEEL_CHECK_GROUP_NUMBER = 28;
 
-    private $binaryFileContent;
-    private $cursor;
+//    private $binaryFileContent;
+//    private $cursor;
     private $docs = array();
     private $docOrder = array();
     private $headerBody;
@@ -25,7 +26,7 @@ class ScadFile {
 
     public function __construct($content) {
 
-        $this->binaryFileContent = $content;
+        parent::__construct($content);
 
         $this->checkHeaderWordCorrect();
 
@@ -67,7 +68,7 @@ class ScadFile {
         $headerWord = $this->readPortionFromCursorPosition(strlen(self::CORRECT_HEADER_WORD));
 
         if (strcmp($headerWord, self::CORRECT_HEADER_WORD) != 0) {
-            throw new WrongFileFormatException;
+            throw new WrongDataFormatException;
         }
     }
     
@@ -140,7 +141,7 @@ class ScadFile {
     
     private function isCursorInTheEndPosition() {
         if ($this->cursor != strlen($this->binaryFileContent)) {
-            throw new WrongFileFormatException;
+            throw new WrongDataFormatException;
         }
     }
     
@@ -201,56 +202,4 @@ class ScadFile {
 
         return $result;
     }
-
-    /*
-     * Since unpack('Q') is not work on PHP 32-bit,
-     * read 32-bit integer and 32-bit zeros
-     */
-
-    private function unpackLongValue() {
-        $intValue = $this->unpackIntValue();
-        $zeroValue = $this->unpackIntValue();
-
-        return $intValue;
-    }
-
-    private function packLongValue($value) {
-        return $this->packIntValue($value) . $this->packIntValue(0);
-    }
-
-    private function unpackIntValue() {
-        return $this->unpackValue('L');
-    }
-
-    private function packIntValue($value) {
-        return pack('L', $value);
-    }
-
-    private function unpackShortValue() {
-        return $this->unpackValue('S');
-    }
-
-    private function packShortValue($value) {
-        return pack('S', $value);
-    }
-
-    private function unpackValue($type) {
-        $bytesCount = $this->bytesCountByType[$type];
-
-        $this->isVariableInsideFile($bytesCount);
-
-        $variableBinaryData = substr($this->binaryFileContent, $this->cursor, $bytesCount);
-        $unpackedArray = unpack($type, $variableBinaryData);
-
-        $this->cursor += $bytesCount;
-
-        return $unpackedArray[1];
-    }
-
-    private function isVariableInsideFile($bytesCount) {
-        if (strlen($this->binaryFileContent) < ($this->cursor + $bytesCount)) {
-            throw new WrongFileFormatException;
-        }
-    }
-
 }
