@@ -194,12 +194,5 @@ class ScadFile extends BinaryDataContainer {
         return $this->docs[$this->docOrder[0]]->address;
     }
     
-    private function readPortionFromCursorPosition($bytesCount) {
-        $this->isVariableInsideFile($bytesCount);
-
-        $result = substr($this->binaryFileContent, $this->cursor, $bytesCount);
-        $this->cursor += $bytesCount;
-
-        return $result;
-    }
+ 
 }

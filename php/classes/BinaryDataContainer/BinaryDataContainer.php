@@ -3,9 +3,8 @@
 namespace php\classes\BinaryDataContainer;
 
 class BinaryDataContainer {
-    
+
     private $bytesCountByType = array('S' => 2, 'L' => 4);
-    
     protected $binaryFileContent;
     protected $cursor;
 
@@ -13,7 +12,16 @@ class BinaryDataContainer {
         $this->binaryFileContent = $content;
         $this->cursor = 0;
     }
-    
+
+    protected function readPortionFromCursorPosition($bytesCount) {
+        $this->isVariableInsideFile($bytesCount);
+
+        $result = substr($this->binaryFileContent, $this->cursor, $bytesCount);
+        $this->cursor += $bytesCount;
+
+        return $result;
+    }
+
     /*
      * Since unpack('Q') is not work on PHP 32-bit,
      * read 32-bit integer and 32-bit zeros
