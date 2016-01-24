@@ -13,7 +13,20 @@ class BinaryDataContainer {
         $this->cursor = 0;
     }
 
-    protected function readPortionFromCursorPosition($bytesCount) {
+    public function setCursor($position) {
+        $this->cursor = $position;
+    }
+    
+    public function getCursor() {
+        return $this->cursor;
+    }
+    
+    public function shiftCursor($increment) {
+        $this->cursor += $increment;
+    }
+
+
+    public function readPortionFromCursorPosition($bytesCount) {
         $this->isVariableInsideFile($bytesCount);
 
         $result = substr($this->binaryFileContent, $this->cursor, $bytesCount);
@@ -21,40 +34,72 @@ class BinaryDataContainer {
 
         return $result;
     }
+    
+    public function readCharArrayUntilZeroByte($shiftCursor = NULL) {
 
+        $nullBytePos = strpos($this->binaryFileContent, "\x00", $this->cursor);
+        $length = $nullBytePos - $this->cursor;
+
+        $charArray = substr($this->binaryFileContent, $this->cursor, $length);
+
+        if ($shiftCursor === NULL) {
+            $this->cursor += $length;
+        } else {
+            $this->cursor += $shiftCursor;
+        }
+
+        return $charArray;
+    }
+    
+    /*
+     *  MAP FORMAT
+     *  (NAME, VARIABLE TYPE, COUNT OF VARIABLES TO READ)
+     */
+    public function unpackPortionByEncodeMap($bytesCount, $map) {
+        $formatArray = array();
+        
+        foreach ($map as $row) {
+            $formatArray[] = $row[1] . $row[2] . $row[0];
+        }
+        
+        $formatString = implode('/', $formatArray);
+        
+        return  unpack($formatString, $this->readPortionFromCursorPosition($bytesCount));
+    }
+    
     /*
      * Since unpack('Q') is not work on PHP 32-bit,
      * read 32-bit integer and 32-bit zeros
      */
 
-    protected function unpackLongValue() {
+    public function unpackLongValue() {
         $intValue = $this->unpackIntValue();
-        $zeroValue = $this->unpackIntValue();
+        $this->unpackIntValue();
 
         return $intValue;
     }
 
-    protected function packLongValue($value) {
+    public function packLongValue($value) {
         return $this->packIntValue($value) . $this->packIntValue(0);
     }
 
-    protected function unpackIntValue() {
+    public function unpackIntValue() {
         return $this->unpackValue('L');
     }
 
-    protected function packIntValue($value) {
+    public function packIntValue($value) {
         return pack('L', $value);
     }
 
-    protected function unpackShortValue() {
+    public function unpackShortValue() {
         return $this->unpackValue('S');
     }
 
-    protected function packShortValue($value) {
+    public function packShortValue($value) {
         return pack('S', $value);
     }
 
-    private function unpackValue($type) {
+    public function unpackValue($type) {
         $bytesCount = $this->bytesCountByType[$type];
 
         $this->isVariableInsideFile($bytesCount);
@@ -67,7 +112,7 @@ class BinaryDataContainer {
         return $unpackedArray[1];
     }
 
-    protected function isVariableInsideFile($bytesCount) {
+    public function isVariableInsideFile($bytesCount) {
         if (strlen($this->binaryFileContent) < ($this->cursor + $bytesCount)) {
             throw new WrongDataFormatException;
         }
