@@ -1,5 +1,7 @@
 <?php
 
+namespace php\classes;
+
 /**
  * Description of InsertFactory
  *

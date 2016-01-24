@@ -1,13 +1,13 @@
 <?php
 
+namespace php\classes;
+
+use php\classes\Document\GroupSteelCheckDocument\GroupSteelCheckDocument;
+use php\classes\MemberGroupSteel21;
+use php\classes\PersistenceFactory;
+use php\classes\Utils;
+
 class TMemberGroupSteel21 {
-
-//    private $databaseAction = [
-//        'steel' => 'databaseEncoding',
-//        'name' => 'databaseEncoding',
-//        'list' => 'databaseList'
-//    ];
-
     /*
      * Read Document No.28. Upload it into database.
      *
@@ -16,58 +16,31 @@ class TMemberGroupSteel21 {
 
     function read($data) {
 
-        // Курсор для чтения строки
-        $pos = 0;
+        $doc = new GroupSteelCheckDocument;
 
-        // Пропускаем неизвестный символ
-        $pos += 1;
-
-        // Кол-во групп
-        list(, $count) = unpack("I", substr($data, $pos, 4));
-        $pos += 4;
-
-        // Пропускаем кол-во байт в блоке list
-        $pos += 4;
-
-        // Массив описаний групп
         $groups = array();
-
-        //Читаем description блок каждой группы блоками по 329 байт
-        for ($i = 0; $i < $count; $i++) {
-            $group = new MemberGroupSteel21();
-            // Читаем 
-            $group->readSingleDescriptionBlock($data, $pos);
-
-            $groups[$i] = $group;
+        foreach ($doc->binaryDataToArray($data) as $item) {
+            
+            $object = new MemberGroupSteel21();
+            
+            foreach ($item as $key => $value) {
+                $object->$key = $value;
+            }
+            
+            $groups[] = $object;
         }
 
-        //Читаем list блок каждой группы
-        for ($i = 0; $i < $count; $i++) {
-            // Читаем
-            $groups[$i]->readSingleListBlock($data, $pos);
-        }
-
-        // Отправляем группы в базу данных
         $this->writeObjectsToDatabase($groups);
     }
 
-    
-
-    /*
-     * Write steel groups into database
-     * 
-     * @param MemberGroupSteel21[] $objects Group's objects
-     */
-
     private function writeObjectsToDatabase($objects) {
-//        mysql_query("TRUNCATE TABLE " . member_group_for_steel);
         $objectAssembler = PersistenceFactory::getObjectAssembler(Utils::getClassName(reset($objects)));
 
         foreach ($objects as $object) {
             $objectAssembler->insert($object);
         }
     }
-    
+
     /*
      * Read steel groups from database
      * 
@@ -75,9 +48,9 @@ class TMemberGroupSteel21 {
      */
 
     private function readObjectsFromDatabase() {
-        
+
         mysql_query("SELECT * FROM " . member_group_for_steel);
-        
+
         switch (mysql_errno()) {
             case 1146:
                 echo "<b>Table " . member_group_for_steel . " doesn't exist. Please create DB.</b><br>";

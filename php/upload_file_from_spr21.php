@@ -1,32 +1,25 @@
 <?php
 
-/**
- * Загружаем SCAD21 *.SPR файл
- *
- */
+namespace php;
+
+use php\classes\TDoc;
+use php\classes\TMemberGroupSteel21;
+use php\classes\ScadFile\ScadFile;
+
 
 //Максимальное время работы скрипта 1 час
 set_time_limit(300);
 //Выделяем память для работы скрипта
 ini_set('memory_limit', '32M');
 
-// Функции автозагрузки классов
-//spl_autoload_extensions(".php");
-//spl_autoload_register();
-
-
-function convert_class_to_filename($class) {
-    return './classes/class_' . str_replace('_', '/', $class) . '.php';
-}
-
-function __autoload($class) {
-    @include_once(convert_class_to_filename($class));
-}
 
 function timeMeasure() {
     list($msec, $sec) = explode(chr(32), microtime());
     return ($sec + $msec);
 }
+
+// Автозагрузчик
+require_once realpath(__DIR__ . "/../vendor/autoload.php");
 
 //очищаем базу данных
 include './db_clear.php';
@@ -46,6 +39,9 @@ define('MAX_DOC', 100);
 if (isset($_FILES['file']['name']) && $_FILES['file']['name'] != '') {
     
     $TIMESTART = timeMeasure();
+    
+//    $content = file_get_contents($_FILES['file']['tmp_name']);
+//    $file = new ScadFile($content);
     
     //читаем файл *.SPR
     $f = fopen($_FILES['file']['tmp_name'], "rb");

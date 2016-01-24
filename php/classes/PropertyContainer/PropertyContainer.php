@@ -25,5 +25,9 @@ class PropertyContainer {
     public function __unset($name) {
         unset($this->data[$name]);
     }
+    
+    public function getArray() {
+        return $this->data;
+    }
 
 }

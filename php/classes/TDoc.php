@@ -1,4 +1,6 @@
 <?php
+namespace php\classes;
+
 class TDoc {
     public $number; // номер документа
     public $byte_offset; // offset
@@ -14,4 +16,4 @@ class TDoc {
         $this->byte_count = $count;
     }
 }
-?>
+

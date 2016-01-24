@@ -1,5 +1,9 @@
 <?php
 
+namespace php\classes;
+
+use php\classes\InsertFactory;
+
 /**
  * Export DOC 28 object into database
  *
@@ -17,9 +21,9 @@ class Doc28InsertFactory extends InsertFactory {
     public function newInsert($obj) {
 
         // Get properties
-        $values = get_object_vars($obj);
-        $values['steel'] = Utils::databaseEncoding($values['steel'], TRUE);
-        $values['name'] = Utils::databaseEncoding($values['name'], TRUE);
+        $values = $obj->getArray();
+//        $values['steel'] = Utils::databaseEncoding($values['steel'], TRUE);
+//        $values['name'] = Utils::databaseEncoding($values['name'], TRUE);
         $values['list'] = Utils::databaseList($values['list'], TRUE);
 
         return $this->buildStatement(Utils::nameOfDoc28Table(), $values);

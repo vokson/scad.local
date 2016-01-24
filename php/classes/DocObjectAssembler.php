@@ -1,15 +1,14 @@
 <?php
 
-/**
- * Description of DocObjectAssembler
- *
- * @author Noskov Alexey <vokson@yandex.ru>
- */
+namespace php\classes;
+
+use PDO;
+use php\classes\Utils;
+
 class DocObjectAssembler {
 
     protected static $PDO;
 
-    // \mapper\PersistenceFactory
     function __construct($factory) {
         $this->factory = $factory;
         if (!isset(self::$PDO)) {

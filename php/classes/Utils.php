@@ -1,5 +1,7 @@
 <?php
 
+namespace php\classes;
+
 class Utils {
     /*
      * Return database connection information
