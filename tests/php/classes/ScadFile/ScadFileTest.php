@@ -29,7 +29,8 @@ class ScadFileTest extends \PHPUnit_Framework_TestCase {
     protected $object;
 
     protected function setUp() {
-        $this->wrongFileFormatExceptionClassName = get_class(new WrongDataFormatException);
+        $this->wrongFileFormatExceptionClassName = get_class(new WrongFileFormatException);
+        $this->wrongDataFormatExceptionClassName = get_class(new WrongDataFormatException);
         $this->missingDocumentExceptionClassName = get_class(new MissingDocumentException);
 
         $this->correctTestFileContent = $this->getFileContent(self::CORRECT_TEST_FILE_NAME);
@@ -56,7 +57,7 @@ class ScadFileTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testIsWrongScadFileFooterAddressIncreasedByOneUploadedWithException() {
-        $this->setExpectedException($this->wrongFileFormatExceptionClassName);
+        $this->setExpectedException($this->wrongDataFormatExceptionClassName);
         $testFileContent = $this->getFileContent(self::WRONG_TEST_FOOTER_INCREASED_FILE_NAME);
         new ScadFile($testFileContent);
     }
@@ -68,7 +69,7 @@ class ScadFileTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testIsWrongScadFileFooterAddressTooBigUploadedWithException() {
-        $this->setExpectedException($this->wrongFileFormatExceptionClassName);
+        $this->setExpectedException($this->wrongDataFormatExceptionClassName);
         $testFileContent = $this->getFileContent(self::WRONG_TEST_FOOTER_TOO_BIG_FILE_NAME);
         new ScadFile($testFileContent);
     }

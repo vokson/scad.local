@@ -3,11 +3,10 @@
 namespace php\classes\ScadFile;
 
 use php\classes\BinaryDataContainer\BinaryDataContainer;
-use php\classes\BinaryDataContainer\WrongDataFormatException;
 use php\classes\BinaryDocument\BinaryDocument;
 use php\classes\ObjectSorting\ObjectSorting;
 
-class ScadFile extends BinaryDataContainer {
+class ScadFile {
     
     const CORRECT_HEADER_WORD = '*Schema*';
     
@@ -17,16 +16,15 @@ class ScadFile extends BinaryDataContainer {
     const FINAL_DOCUMENT_NUMBER = 0;
     const DOC_STEEL_CHECK_GROUP_NUMBER = 28;
 
-//    private $binaryFileContent;
-//    private $cursor;
+    private $binaryDataContainer;
     private $docs = array();
     private $docOrder = array();
     private $headerBody;
     private $fileFooterAddress;
 
     public function __construct($content) {
-
-        parent::__construct($content);
+        
+        $this->binaryDataContainer = new BinaryDataContainer($content);
 
         $this->checkHeaderWordCorrect();
 
@@ -40,7 +38,7 @@ class ScadFile extends BinaryDataContainer {
         $content = '';
 
         $content .= self::CORRECT_HEADER_WORD;
-        $content .= $this->packIntValue(0);
+        $content .= $this->binaryDataContainer->packIntValue(0);
         $content .= $this->headerBody;
 
         for ($i = 0; $i < count($this->docOrder); $i++) {
@@ -64,22 +62,22 @@ class ScadFile extends BinaryDataContainer {
     }
     
     private function checkHeaderWordCorrect() {
-        $this->cursor = 0;
-        $headerWord = $this->readPortionFromCursorPosition(strlen(self::CORRECT_HEADER_WORD));
+        $this->binaryDataContainer->setCursor(0);
+        $headerWord = $this->binaryDataContainer->readPortionFromCursorPosition(strlen(self::CORRECT_HEADER_WORD));
 
         if (strcmp($headerWord, self::CORRECT_HEADER_WORD) != 0) {
-            throw new WrongDataFormatException;
+            throw new WrongFileFormatException;
         }
     }
     
     private function getFileFooterAddress() {
-        $this->cursor = self::FOOTER_VARIABLE_ADDRESS;
-        return $this->unpackIntValue();
+        $this->binaryDataContainer->setCursor(self::FOOTER_VARIABLE_ADDRESS);
+        return $this->binaryDataContainer->unpackIntValue();
     }
     
     private function uploadDocuments() {
 
-        $this->cursor = $this->fileFooterAddress;
+        $this->binaryDataContainer->setCursor($this->fileFooterAddress);
 
         while ($this->addNewDocumentUsingDescriptionInCursorPosition()) {
             
@@ -92,7 +90,7 @@ class ScadFile extends BinaryDataContainer {
     }
     
     private function getContentWithCorrectFooterAddress($data) {
-        $address = $this->packIntValue(strlen($data));
+        $address = $this->binaryDataContainer->packIntValue(strlen($data));
         return substr_replace($data, $address, self::FOOTER_VARIABLE_ADDRESS, strlen($address));
     }
     
@@ -114,14 +112,14 @@ class ScadFile extends BinaryDataContainer {
 
     private function addNewDocumentUsingDescriptionInCursorPosition() {
 
-        $number = $this->unpackShortValue();
+        $number = $this->binaryDataContainer->unpackShortValue();
 
         if ($this->isNumberOfDocumentFinal($number)) {
             return FALSE;
         }
 
-        $address = $this->unpackLongValue();
-        $bytesCount = $this->unpackLongValue();
+        $address = $this->binaryDataContainer->unpackLongValue();
+        $bytesCount = $this->binaryDataContainer->unpackLongValue();
 
         $this->docs[$number] = new BinaryDocument($number, $address, $bytesCount);
         return TRUE;
@@ -130,18 +128,18 @@ class ScadFile extends BinaryDataContainer {
     private function getFooter() {
         $footer = '';
         foreach ($this->docs as $doc) {
-            $footer .= $this->packShortValue($doc->number);
-            $footer .= $this->packLongValue($doc->address);
-            $footer .= $this->packLongValue($doc->bytesCount);
+            $footer .= $this->binaryDataContainer->packShortValue($doc->number);
+            $footer .= $this->binaryDataContainer->packLongValue($doc->address);
+            $footer .= $this->binaryDataContainer->packLongValue($doc->bytesCount);
         }
-        $footer .= $this->packShortValue(0);
+        $footer .= $this->binaryDataContainer->packShortValue(0);
 
         return $footer;
     }
     
     private function isCursorInTheEndPosition() {
-        if ($this->cursor != strlen($this->binaryFileContent)) {
-            throw new WrongDataFormatException;
+        if ($this->binaryDataContainer->isCursorInTheEndPosition() === FALSE) {
+            throw new WrongFileFormatException;
         }
     }
     
@@ -166,16 +164,16 @@ class ScadFile extends BinaryDataContainer {
             $appendixAddress = $bodyAddress + $bodyBytesCount;
             $appendixBytesCount = $nextDocAddress - $appendixAddress;
 
-            $this->cursor = $bodyAddress;
-            $this->docs[$currentDocNumber]->body = $this->readPortionFromCursorPosition($bodyBytesCount);
-            $this->docs[$currentDocNumber]->appendix = $this->readPortionFromCursorPosition($appendixBytesCount);
+            $this->binaryDataContainer->setCursor($bodyAddress);
+            $this->docs[$currentDocNumber]->body = $this->binaryDataContainer->readPortionFromCursorPosition($bodyBytesCount);
+            $this->docs[$currentDocNumber]->appendix = $this->binaryDataContainer->readPortionFromCursorPosition($appendixBytesCount);
         }
     }
     
     private function readHeaderBody() {
 
-        $this->cursor = self::HEADER_DOCUMENT_ADDRESS;
-        $this->headerBody = $this->readPortionFromCursorPosition($this->getMinDocAddress() - self::HEADER_DOCUMENT_ADDRESS);
+        $this->binaryDataContainer->setCursor(self::HEADER_DOCUMENT_ADDRESS);
+        $this->headerBody = $this->binaryDataContainer->readPortionFromCursorPosition($this->getMinDocAddress() - self::HEADER_DOCUMENT_ADDRESS);
     }
 
     private function isNumberOfDocumentFinal($number) {

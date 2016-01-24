@@ -4,7 +4,7 @@ namespace php\classes\BinaryDataContainer;
 
 class BinaryDataContainer {
 
-    private $bytesCountByType = array('S' => 2, 'L' => 4);
+    private $bytesCountByType = array('C' => 1, 'S' => 2, 'L' => 4);
     protected $binaryFileContent;
     protected $cursor;
 
@@ -16,15 +16,18 @@ class BinaryDataContainer {
     public function setCursor($position) {
         $this->cursor = $position;
     }
-    
+
     public function getCursor() {
         return $this->cursor;
     }
-    
+
     public function shiftCursor($increment) {
         $this->cursor += $increment;
     }
-
+    
+    public function isCursorInTheEndPosition() {
+        return $this->getCursor() == strlen($this->binaryFileContent);
+    }
 
     public function readPortionFromCursorPosition($bytesCount) {
         $this->isVariableInsideFile($bytesCount);
@@ -34,7 +37,7 @@ class BinaryDataContainer {
 
         return $result;
     }
-    
+
     public function readCharArrayUntilZeroByte($shiftCursor = NULL) {
 
         $nullBytePos = strpos($this->binaryFileContent, "\x00", $this->cursor);
@@ -50,23 +53,57 @@ class BinaryDataContainer {
 
         return $charArray;
     }
-    
+
     /*
      *  MAP FORMAT
      *  (NAME, VARIABLE TYPE, COUNT OF VARIABLES TO READ)
      */
-    public function unpackPortionByEncodeMap($bytesCount, $map) {
-        $formatArray = array();
-        
+
+    public function packPortionByMap($array, $map) {
+
+        $binaryData = '';
+
         foreach ($map as $row) {
-            $formatArray[] = $row[1] . $row[2] . $row[0];
+
+            $name = $row[0];
+            $type = $row[1];
+            $count = $row[2];
+
+            $format = $type . $count;
+
+            if ($type == 'x') {
+                $packedVariable = pack($format);
+            } else {
+                $packedVariable = pack($format, $array[$name]);
+            }
+
+            $binaryData .= $packedVariable;
         }
-        
-        $formatString = implode('/', $formatArray);
-        
-        return  unpack($formatString, $this->readPortionFromCursorPosition($bytesCount));
+
+        return $binaryData;
     }
-    
+
+    /*
+     *  MAP FORMAT
+     *  (NAME, VARIABLE TYPE, COUNT OF VARIABLES TO READ)
+     */
+
+    public function unpackPortionByMap($bytesCount, $map) {
+        $formatArray = array();
+
+        foreach ($map as $row) {
+            $name = $row[0];
+            $type = $row[1];
+            $count = $row[2];
+
+            $formatArray[] = $type . $count . $name;
+        }
+
+        $formatString = implode('/', $formatArray);
+
+        return unpack($formatString, $this->readPortionFromCursorPosition($bytesCount));
+    }
+
     /*
      * Since unpack('Q') is not work on PHP 32-bit,
      * read 32-bit integer and 32-bit zeros
@@ -99,7 +136,15 @@ class BinaryDataContainer {
         return pack('S', $value);
     }
 
-    public function unpackValue($type) {
+    public function unpackCharValue() {
+        return $this->unpackValue('C');
+    }
+
+    public function packCharValue($value) {
+        return pack('C', $value);
+    }
+
+    private function unpackValue($type) {
         $bytesCount = $this->bytesCountByType[$type];
 
         $this->isVariableInsideFile($bytesCount);
@@ -112,7 +157,7 @@ class BinaryDataContainer {
         return $unpackedArray[1];
     }
 
-    public function isVariableInsideFile($bytesCount) {
+    private function isVariableInsideFile($bytesCount) {
         if (strlen($this->binaryFileContent) < ($this->cursor + $bytesCount)) {
             throw new WrongDataFormatException;
         }

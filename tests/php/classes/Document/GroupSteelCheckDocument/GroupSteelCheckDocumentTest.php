@@ -34,8 +34,12 @@ class GroupSteelCheckDocumentTest extends \PHPUnit_Framework_TestCase {
             'FC' => 150.0,
             'FT' => 400.0,
             'BD' => 6.0,
+            'aFC' => 0.0,
+            'aFT' => 0.0,
             'length_XZ' => 3.0,
             'length_XY' => 1.5,
+            'noname1' => 1.0,
+            'noname2' => 1.0,
             'check_DAL' => 0,
             'check_DTL' => 0,
             'limit_RDAL' => 0.007,
@@ -58,17 +62,21 @@ class GroupSteelCheckDocumentTest extends \PHPUnit_Framework_TestCase {
             'gamma_n' => 1.2,
             'mu_XZ' => 3.0,
             'mu_XY' => 6.0,
-            'FC' => '180-60a',
+            'FC' => 180.0,
             'FT' => 300.0,
             'BD' => 0,
+            'aFC' => 60.0,
+            'aFT' => 0.0,
             'length_XZ' => 0,
             'length_XY' => 0,
+            'noname1' => 1.0,
+            'noname2' => 1.0,
             'check_DAL' => 1,
             'check_DTL' => 1,
-            'limit_RDAL' => 'auto',
+            'limit_RDAL' => -1.0, // автоматические
             'limit_RDTL' => 0.008,
-            'limit_ADAL' => 'no limit',
-            'limit_ADTL' => 20,
+            'limit_ADAL' => -2.0, // не ограниченные
+            'limit_ADTL' => 0.02,
             'addGroup' => 0,
             'list' => array(92, 93, 94)
         ),
@@ -80,21 +88,25 @@ class GroupSteelCheckDocumentTest extends \PHPUnit_Framework_TestCase {
             'isMuUsed' => 1,
             'onlyElastic' => 0,
             'steel' => 'C235',
-            'Ry' => 0,
+            'Ry' => 0.0,
             'gamma_c' => 0.9,
             'gamma_n' => 1.1,
-            'mu_XZ' => 0,
-            'mu_XY' => 0,
-            'FC' => 0,
-            'FT' => 0,
+            'mu_XZ' => 1.0,
+            'mu_XY' => 1.0,
+            'FC' => 180.0,
+            'FT' => 400.0,
             'BD' => 4.5,
+            'aFC' => 60.0,
+            'aFT' => 0.0,
             'length_XZ' => 0,
             'length_XY' => 0,
+            'noname1' => 1.0,
+            'noname2' => 1.0,
             'check_DAL' => 1,
             'check_DTL' => 0,
             'limit_RDAL' => 0.007,
             'limit_RDTL' => 0,
-            'limit_ADAL' => 23,
+            'limit_ADAL' => 0.023,
             'limit_ADTL' => 0,
             'addGroup' => 1,
             'list' => array(326, 327)
@@ -112,17 +124,21 @@ class GroupSteelCheckDocumentTest extends \PHPUnit_Framework_TestCase {
             'gamma_n' => 1.5,
             'mu_XZ' => 1.5,
             'mu_XY' => 2.7,
-            'FC' => 0,
-            'FT' => 0,
-            'BD' => 0,
+            'FC' => 180.0,
+            'FT' => 400.0,
+            'BD' => 0.0,
+            'aFC' => 60.0,
+            'aFT' => 0.0,
             'length_XZ' => 0,
             'length_XY' => 0,
+            'noname1' => 1.0,
+            'noname2' => 1.0,
             'check_DAL' => 0,
             'check_DTL' => 1,
             'limit_RDAL' => 0,
             'limit_RDTL' => 0.007,
             'limit_ADAL' => 0,
-            'limit_ADTL' => 16,
+            'limit_ADTL' => -2.0, // не ограниченные
             'addGroup' => 1,
             'list' => array(104, 333)
         )
@@ -147,15 +163,10 @@ class GroupSteelCheckDocumentTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue($isObjectCreated);
     }
 
-//
-//    public function testGroupCount() {
-//        $array = $this->document->binaryDataToArray($this->content);
-//        $this->assertEquals(self::CORRECT_COUNT_OF_GROUPS, count($array));
-//    }
 
     public function testBinaryDataToArray() {
         $resultArray = $this->document->binaryDataToArray($this->content);
-        var_dump($resultArray);
+//        var_dump($resultArray);
 
         for ($i = 0; $i < count($this->array); $i++) {
             
@@ -165,8 +176,12 @@ class GroupSteelCheckDocumentTest extends \PHPUnit_Framework_TestCase {
         }
     }
 
-//    public function testArrayToBinaryData() {
-//        $resultData = $this->document->arrayToBinaryData($this->array);
-//        $this->assertEquals($this->content, $resultData);
-//    }
+    public function testArrayToBinaryData() {
+        $resultData = $this->document->arrayToBinaryData($this->array);
+        
+        $this->scadFile->setSteelCheckGroupDocument($resultData);
+        file_put_contents(realpath(__DIR__ . DIRECTORY_SEPARATOR . 'resultScad21TestFile.SPR'), $this->scadFile->getFile());
+        
+        $this->assertEquals($this->content, $resultData);
+    }
 }
