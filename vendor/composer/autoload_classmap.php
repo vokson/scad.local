@@ -29,6 +29,8 @@ return array(
     'php\\classes\\Doc28InsertFactory' => $baseDir . '/php/classes/Doc28InsertFactory.php',
     'php\\classes\\Doc28PersistenceFactory' => $baseDir . '/php/classes/Doc28PersistenceFactory.php',
     'php\\classes\\DocObjectAssembler' => $baseDir . '/php/classes/DocObjectAssembler.php',
+    'php\\classes\\Document\\CombinationDocument\\CombinationDocument' => $baseDir . '/php/classes/Document/CombinationDocument/CombinationDocument.php',
+    'php\\classes\\Document\\CombinationDocument\\CombinationDocumentTest' => $baseDir . '/tests/php/classes/Document/CombinationDocument/CombinationDocumentTest.php',
     'php\\classes\\Document\\GroupSteelCheckDocument\\GroupSteelCheckDocument' => $baseDir . '/php/classes/Document/GroupSteelCheckDocument/GroupSteelCheckDocument.php',
     'php\\classes\\Document\\GroupSteelCheckDocument\\GroupSteelCheckDocumentException' => $baseDir . '/php/classes/Document/GroupSteelCheckDocument/Exception/GroupSteelCheckDocumentException.php',
     'php\\classes\\Document\\GroupSteelCheckDocument\\GroupSteelCheckDocumentTest' => $baseDir . '/tests/php/classes/Document/GroupSteelCheckDocument/GroupSteelCheckDocumentTest.php',

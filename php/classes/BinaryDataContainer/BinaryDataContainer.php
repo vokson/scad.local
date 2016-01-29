@@ -4,7 +4,7 @@ namespace php\classes\BinaryDataContainer;
 
 class BinaryDataContainer {
 
-    private $bytesCountByType = array('C' => 1, 'S' => 2, 'L' => 4);
+    private $bytesCountByType = array('C' => 1, 'S' => 2, 'L' => 4, 'd' => 8);
     protected $binaryFileContent;
     protected $cursor;
 
@@ -142,6 +142,14 @@ class BinaryDataContainer {
 
     public function packCharValue($value) {
         return pack('C', $value);
+    }
+    
+    public function unpackDoubleValue() {
+        return $this->unpackValue('d');
+    }
+    
+    public function packDoubleValue($value) {
+        return pack('d', $value);
     }
 
     private function unpackValue($type) {
